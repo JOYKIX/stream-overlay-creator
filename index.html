@@ -1,1 +1,1087 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stream Overlay Creator</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07111f;
+        --panel: rgba(14, 23, 39, 0.88);
+        --panel-border: rgba(148, 163, 184, 0.18);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #8b5cf6;
+        --accent-soft: rgba(139, 92, 246, 0.18);
+        --danger: #f87171;
+        --success: #4ade80;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
 
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 35%),
+          radial-gradient(circle at top right, rgba(139, 92, 246, 0.22), transparent 30%),
+          linear-gradient(180deg, #020617 0%, #07111f 42%, #020617 100%);
+        color: var(--text);
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        border: none;
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .hero-card,
+      .panel,
+      .preview-card,
+      .stat-card {
+        background: var(--panel);
+        backdrop-filter: blur(14px);
+        border: 1px solid var(--panel-border);
+        border-radius: 24px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+      }
+
+      .hero-card {
+        padding: 28px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        color: #cbd5e1;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.88rem;
+        letter-spacing: 0.02em;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.05;
+        margin-bottom: 14px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: minmax(320px, 430px) minmax(320px, 1fr);
+      }
+
+      .panel {
+        padding: 24px;
+      }
+
+      .auth-card {
+        display: grid;
+        gap: 18px;
+      }
+
+      .tabs {
+        display: inline-grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+      }
+
+      .tab {
+        border-radius: 999px;
+        padding: 10px 18px;
+        background: transparent;
+        color: var(--muted);
+        transition: 0.2s ease;
+      }
+
+      .tab.active {
+        background: linear-gradient(135deg, var(--accent), #38bdf8);
+        color: white;
+        box-shadow: 0 12px 24px rgba(56, 189, 248, 0.25);
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        font-size: 0.94rem;
+        color: #d8e1ef;
+      }
+
+      .field input,
+      .field textarea,
+      .field select {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(15, 23, 42, 0.72);
+        color: var(--text);
+        padding: 12px 14px;
+        outline: none;
+      }
+
+      .field textarea {
+        min-height: 88px;
+        resize: vertical;
+      }
+
+      .field input:focus,
+      .field textarea:focus,
+      .field select:focus {
+        border-color: rgba(56, 189, 248, 0.8);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.16);
+      }
+
+      .btn,
+      .ghost-btn,
+      .danger-btn {
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-weight: 600;
+        transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .btn:hover,
+      .ghost-btn:hover,
+      .danger-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn {
+        background: linear-gradient(135deg, var(--accent), #38bdf8);
+        color: white;
+        box-shadow: 0 18px 30px rgba(56, 189, 248, 0.18);
+      }
+
+      .ghost-btn {
+        background: rgba(15, 23, 42, 0.64);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        color: var(--text);
+      }
+
+      .danger-btn {
+        background: rgba(127, 29, 29, 0.5);
+        color: #fecaca;
+        border: 1px solid rgba(248, 113, 113, 0.3);
+      }
+
+      .inline-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .status {
+        min-height: 24px;
+        font-size: 0.95rem;
+      }
+
+      .status.success {
+        color: var(--success);
+      }
+
+      .status.error {
+        color: var(--danger);
+      }
+
+      .dashboard {
+        display: grid;
+        gap: 24px;
+      }
+
+      .dashboard-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+      }
+
+      .stat-card {
+        padding: 18px;
+      }
+
+      .stat-card strong {
+        display: block;
+        font-size: 1.2rem;
+        margin-top: 8px;
+      }
+
+      .editor-layout {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
+      }
+
+      .preview-card {
+        padding: 20px;
+      }
+
+      .preview-frame {
+        position: relative;
+        overflow: hidden;
+        min-height: 420px;
+        border-radius: 24px;
+        background:
+          linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(10, 15, 28, 0.75)),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Crect width='240' height='240' fill='none'/%3E%3Cg opacity='0.25'%3E%3Cpath d='M0 0h240v1H0zM0 40h240v1H0zM0 80h240v1H0zM0 120h240v1H0zM0 160h240v1H0zM0 200h240v1H0z' fill='%23334155'/%3E%3Cpath d='M0 0h1v240H0zM40 0h1v240h-1zM80 0h1v240h-1zM120 0h1v240h-1zM160 0h1v240h-1zM200 0h1v240h-1z' fill='%23334155'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: cover;
+      }
+
+      .overlay-surface {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px;
+      }
+
+      .overlay-top,
+      .overlay-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .glass-box {
+        background: rgba(15, 23, 42, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 22px;
+        box-shadow: 0 20px 34px rgba(15, 23, 42, 0.2);
+      }
+
+      .headline-box {
+        min-width: min(100%, 360px);
+        padding: 18px 20px;
+      }
+
+      .headline-box h2 {
+        margin-bottom: 8px;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+      }
+
+      .headline-box p {
+        margin-bottom: 0;
+      }
+
+      .pill-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .info-pill,
+      .ticker-pill,
+      .room-pill {
+        padding: 10px 14px;
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ticker-column {
+        display: grid;
+        gap: 10px;
+        align-content: start;
+      }
+
+      .ticker-pill strong,
+      .info-pill strong {
+        font-size: 1rem;
+      }
+
+      .overlay-center-note {
+        align-self: flex-end;
+        width: min(100%, 360px);
+        padding: 18px;
+      }
+
+      .overlay-center-note .message {
+        white-space: pre-wrap;
+        line-height: 1.45;
+      }
+
+      .clock {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.08em;
+      }
+
+      .link-box {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+
+      .code-line {
+        font-family: "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.92rem;
+        overflow-wrap: anywhere;
+        color: #bfdbfe;
+      }
+
+      .overlay-only {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .overlay-only .overlay-stage {
+        position: fixed;
+        inset: 0;
+      }
+
+      .overlay-empty {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: white;
+        background: radial-gradient(circle at center, rgba(139, 92, 246, 0.18), rgba(2, 6, 23, 0.96));
+      }
+
+      .overlay-empty > div {
+        max-width: 500px;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 980px) {
+        .grid,
+        .editor-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="app" class="shell">
+      <section class="hero">
+        <div class="hero-card">
+          <span class="badge">⚡ Overlay creator temps réel avec Firebase</span>
+          <h1>Crée ton overlay de stream, connecte-le à OBS et pilote-le avec un simple lien.</h1>
+          <p class="muted">
+            Crée un compte avec un identifiant + mot de passe hashé côté client, édite ton overlay,
+            puis récupère une URL du style <strong>?room=ton-id</strong> pour l'utiliser dans OBS,
+            Streamlabs ou un navigateur en source web.
+          </p>
+        </div>
+        <div class="hero-card">
+          <h2>Ce que ça fait</h2>
+          <div class="stats">
+            <div class="stat-card">
+              <span class="muted">Compte</span>
+              <strong>ID + mot de passe</strong>
+            </div>
+            <div class="stat-card">
+              <span class="muted">Lien OBS</span>
+              <strong>?room=ton-id</strong>
+            </div>
+            <div class="stat-card">
+              <span class="muted">Sync live</span>
+              <strong>Realtime DB</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="builder-view" class="grid">
+        <aside class="panel auth-card" id="auth-panel">
+          <div>
+            <h2>Connexion / création de compte</h2>
+            <p class="muted">
+              Le mot de passe est hashé en SHA-256 dans la base. Comme l'app est 100% front,
+              ce hashage est une protection basique côté client, pas un remplacement d'un vrai backend sécurisé.
+            </p>
+          </div>
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="signup" type="button">Créer un compte</button>
+            <button class="tab" data-tab="login" type="button">Se connecter</button>
+          </div>
+
+          <form id="auth-form" class="form-grid">
+            <div class="field">
+              <label for="account-id">Identifiant / room</label>
+              <input id="account-id" name="accountId" required minlength="3" maxlength="24" placeholder="ex: monstream" />
+            </div>
+            <div class="field">
+              <label for="account-password">Mot de passe</label>
+              <input id="account-password" name="password" type="password" required minlength="6" placeholder="••••••••" />
+            </div>
+            <div class="inline-actions">
+              <button id="auth-submit" class="btn" type="submit">Créer mon compte</button>
+              <button id="auth-reset" class="ghost-btn" type="button">Réinitialiser</button>
+            </div>
+          </form>
+
+          <div id="auth-status" class="status" aria-live="polite"></div>
+
+          <div class="footer-note muted">
+            Astuce: ton identifiant devient aussi la room publique lue par l'overlay.
+          </div>
+        </aside>
+
+        <section id="dashboard" class="panel dashboard hidden">
+          <div class="dashboard-top">
+            <div>
+              <h2>Dashboard overlay</h2>
+              <p class="muted">Modifie le design et publie en direct dans Firebase.</p>
+            </div>
+            <div class="inline-actions">
+              <button id="copy-link" class="ghost-btn" type="button">Copier le lien OBS</button>
+              <button id="logout-btn" class="ghost-btn" type="button">Se déconnecter</button>
+              <button id="delete-account" class="danger-btn" type="button">Supprimer le compte</button>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span class="muted">Room active</span>
+              <strong id="room-stat">-</strong>
+            </div>
+            <div class="stat-card">
+              <span class="muted">Dernière synchro</span>
+              <strong id="sync-stat">Jamais</strong>
+            </div>
+            <div class="stat-card">
+              <span class="muted">Mode OBS</span>
+              <strong>Lecture seule</strong>
+            </div>
+          </div>
+
+          <div class="editor-layout">
+            <form id="editor-form" class="form-grid">
+              <div class="field">
+                <label for="title">Titre principal</label>
+                <input id="title" name="title" maxlength="40" placeholder="Starting Soon" />
+              </div>
+              <div class="field">
+                <label for="subtitle">Sous-titre</label>
+                <input id="subtitle" name="subtitle" maxlength="70" placeholder="On démarre dans quelques minutes" />
+              </div>
+              <div class="field">
+                <label for="message">Message / note centrale</label>
+                <textarea id="message" name="message" maxlength="220" placeholder="Merci d'être là 💜"></textarea>
+              </div>
+              <div class="field">
+                <label for="social">Handle / réseau</label>
+                <input id="social" name="social" maxlength="40" placeholder="@tonpseudo" />
+              </div>
+              <div class="field">
+                <label for="event-label">Label événement</label>
+                <input id="event-label" name="eventLabel" maxlength="30" placeholder="Dernier follow" />
+              </div>
+              <div class="field">
+                <label for="event-value">Valeur événement</label>
+                <input id="event-value" name="eventValue" maxlength="40" placeholder="viewer_42" />
+              </div>
+              <div class="field">
+                <label for="goal-label">Label objectif</label>
+                <input id="goal-label" name="goalLabel" maxlength="30" placeholder="Sub goal" />
+              </div>
+              <div class="field">
+                <label for="goal-value">Valeur objectif</label>
+                <input id="goal-value" name="goalValue" maxlength="40" placeholder="42 / 100" />
+              </div>
+              <div class="field">
+                <label for="accent">Couleur accent</label>
+                <input id="accent" name="accent" type="color" value="#8b5cf6" />
+              </div>
+              <div class="field">
+                <label for="text-color">Couleur texte</label>
+                <input id="text-color" name="textColor" type="color" value="#f8fafc" />
+              </div>
+              <div class="field">
+                <label for="background-opacity">Opacité du panneau</label>
+                <input id="background-opacity" name="backgroundOpacity" type="range" min="0.2" max="0.95" step="0.05" value="0.78" />
+              </div>
+              <div class="field">
+                <label for="show-clock">Afficher l'horloge</label>
+                <select id="show-clock" name="showClock">
+                  <option value="true">Oui</option>
+                  <option value="false">Non</option>
+                </select>
+              </div>
+              <div class="inline-actions">
+                <button class="btn" type="submit">Enregistrer</button>
+                <button id="reset-overlay" class="ghost-btn" type="button">Réinitialiser l'overlay</button>
+              </div>
+            </form>
+
+            <div class="preview-card">
+              <h3>Aperçu live</h3>
+              <div class="link-box">
+                <span class="muted">Lien public overlay</span>
+                <div id="overlay-link" class="code-line"></div>
+              </div>
+              <div class="preview-frame">
+                <div id="preview-surface" class="overlay-surface"></div>
+              </div>
+              <div id="editor-status" class="status" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <section id="overlay-view" class="overlay-only hidden">
+      <div id="overlay-stage" class="overlay-stage"></div>
+      <div id="overlay-empty" class="overlay-empty hidden">
+        <div>
+          <h2>Overlay introuvable</h2>
+          <p>
+            Vérifie l'URL, par exemple <strong>?room=ton-id</strong>, ou crée d'abord le compte associé.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        get,
+        set,
+        update,
+        remove,
+        serverTimestamp,
+        onValue,
+      } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBmC1_Hklc1SgvVQXyNT07TYDfVn2euRO8",
+        authDomain: "stream-overlay-creator.firebaseapp.com",
+        databaseURL: "https://stream-overlay-creator-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "stream-overlay-creator",
+        storageBucket: "stream-overlay-creator.firebasestorage.app",
+        messagingSenderId: "79079678682",
+        appId: "1:79079678682:web:b267bb62195f50f6273be3",
+      };
+
+      const DEFAULT_OVERLAY = {
+        title: "Starting Soon",
+        subtitle: "Le live démarre dans quelques minutes",
+        message: "Installe-toi tranquillement, le stream arrive 👋",
+        social: "@streamer",
+        eventLabel: "Dernier follow",
+        eventValue: "viewer_42",
+        goalLabel: "Objectif subs",
+        goalValue: "42 / 100",
+        accent: "#8b5cf6",
+        textColor: "#f8fafc",
+        backgroundOpacity: 0.78,
+        showClock: true,
+      };
+
+      const SESSION_KEY = "stream-overlay-session";
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const query = new URLSearchParams(window.location.search);
+      const roomFromUrl = query.get("room");
+
+      const builderView = document.getElementById("builder-view");
+      const overlayView = document.getElementById("overlay-view");
+      const overlayStage = document.getElementById("overlay-stage");
+      const overlayEmpty = document.getElementById("overlay-empty");
+      const authPanel = document.getElementById("auth-panel");
+      const dashboard = document.getElementById("dashboard");
+      const authForm = document.getElementById("auth-form");
+      const authStatus = document.getElementById("auth-status");
+      const authSubmit = document.getElementById("auth-submit");
+      const authReset = document.getElementById("auth-reset");
+      const editorForm = document.getElementById("editor-form");
+      const editorStatus = document.getElementById("editor-status");
+      const roomStat = document.getElementById("room-stat");
+      const syncStat = document.getElementById("sync-stat");
+      const overlayLink = document.getElementById("overlay-link");
+      const previewSurface = document.getElementById("preview-surface");
+      const copyLinkBtn = document.getElementById("copy-link");
+      const logoutBtn = document.getElementById("logout-btn");
+      const deleteBtn = document.getElementById("delete-account");
+      const resetOverlayBtn = document.getElementById("reset-overlay");
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+
+      let authMode = "signup";
+      let currentUserId = null;
+      let previewClockTimer = null;
+      let liveOverlayClockTimer = null;
+      let lastPreviewConfig = structuredClone(DEFAULT_OVERLAY);
+      let lastLiveOverlayConfig = structuredClone(DEFAULT_OVERLAY);
+
+      if (roomFromUrl) {
+        startOverlayMode(roomFromUrl);
+      } else {
+        hydrateSession();
+      }
+
+      tabs.forEach((button) => {
+        button.addEventListener("click", () => switchAuthMode(button.dataset.tab));
+      });
+
+      authReset.addEventListener("click", () => {
+        authForm.reset();
+        setStatus(authStatus, "", "");
+      });
+
+      authForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(authForm);
+        const rawId = String(formData.get("accountId") || "").trim();
+        const password = String(formData.get("password") || "").trim();
+        const accountId = normalizeAccountId(rawId);
+
+        if (!accountId || accountId.length < 3) {
+          setStatus(authStatus, "Choisis un identifiant d'au moins 3 caractères.", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          setStatus(authStatus, "Le mot de passe doit faire au moins 6 caractères.", "error");
+          return;
+        }
+
+        authSubmit.disabled = true;
+        setStatus(authStatus, authMode === "signup" ? "Création du compte..." : "Connexion en cours...", "");
+
+        try {
+          if (authMode === "signup") {
+            await signUp(accountId, password);
+            setStatus(authStatus, `Compte ${accountId} créé avec succès.`, "success");
+          } else {
+            await login(accountId, password);
+            setStatus(authStatus, `Connecté en tant que ${accountId}.`, "success");
+          }
+        } catch (error) {
+          setStatus(authStatus, error.message || "Une erreur est survenue.", "error");
+        } finally {
+          authSubmit.disabled = false;
+        }
+      });
+
+      editorForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentUserId) {
+          setStatus(editorStatus, "Connecte-toi pour enregistrer l'overlay.", "error");
+          return;
+        }
+
+        const config = readOverlayForm();
+        try {
+          await update(ref(db, `users/${currentUserId}`), {
+            overlay: config,
+            updatedAt: serverTimestamp(),
+          });
+          lastPreviewConfig = config;
+          renderPreview(config);
+          updateDashboardMeta();
+          setStatus(editorStatus, "Overlay enregistré dans Firebase.", "success");
+        } catch (error) {
+          setStatus(editorStatus, error.message || "Impossible d'enregistrer.", "error");
+        }
+      });
+
+      copyLinkBtn.addEventListener("click", async () => {
+        if (!currentUserId) return;
+        const link = buildOverlayLink(currentUserId);
+        try {
+          await navigator.clipboard.writeText(link);
+          setStatus(editorStatus, "Lien OBS copié dans le presse-papiers.", "success");
+        } catch {
+          setStatus(editorStatus, "Copie impossible automatiquement, utilise le lien affiché.", "error");
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem(SESSION_KEY);
+        currentUserId = null;
+        authPanel.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        setStatus(editorStatus, "Déconnecté.", "");
+      });
+
+      deleteBtn.addEventListener("click", async () => {
+        if (!currentUserId) return;
+        const confirmed = window.confirm(`Supprimer définitivement le compte ${currentUserId} et son overlay ?`);
+        if (!confirmed) return;
+
+        try {
+          await remove(ref(db, `users/${currentUserId}`));
+          localStorage.removeItem(SESSION_KEY);
+          currentUserId = null;
+          authPanel.classList.remove("hidden");
+          dashboard.classList.add("hidden");
+          authForm.reset();
+          setStatus(authStatus, "Compte supprimé.", "success");
+        } catch (error) {
+          setStatus(editorStatus, error.message || "Suppression impossible.", "error");
+        }
+      });
+
+      resetOverlayBtn.addEventListener("click", () => {
+        fillOverlayForm(DEFAULT_OVERLAY);
+        renderPreview(DEFAULT_OVERLAY);
+        setStatus(editorStatus, "Overlay remis sur la base par défaut. Clique sur Enregistrer pour publier.", "");
+      });
+
+      editorForm.addEventListener("input", () => {
+        const config = readOverlayForm();
+        lastPreviewConfig = config;
+        renderPreview(config);
+      });
+
+      function switchAuthMode(nextMode) {
+        authMode = nextMode;
+        tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === nextMode));
+        authSubmit.textContent = nextMode === "signup" ? "Créer mon compte" : "Me connecter";
+        setStatus(authStatus, "", "");
+      }
+
+      function normalizeAccountId(value) {
+        return value.toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 24);
+      }
+
+      async function hashPassword(accountId, password) {
+        const source = `${accountId}:${password}`;
+        const data = new TextEncoder().encode(source);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hashBuffer))
+          .map((byte) => byte.toString(16).padStart(2, "0"))
+          .join("");
+      }
+
+      async function signUp(accountId, password) {
+        const userRef = ref(db, `users/${accountId}`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          throw new Error("Cet identifiant existe déjà.");
+        }
+
+        const passwordHash = await hashPassword(accountId, password);
+        await set(userRef, {
+          accountId,
+          passwordHash,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          overlay: DEFAULT_OVERLAY,
+        });
+
+        persistSession(accountId);
+        await openDashboard(accountId);
+      }
+
+      async function login(accountId, password) {
+        const userRef = ref(db, `users/${accountId}`);
+        const snapshot = await get(userRef);
+        if (!snapshot.exists()) {
+          throw new Error("Compte introuvable.");
+        }
+
+        const userData = snapshot.val();
+        const passwordHash = await hashPassword(accountId, password);
+        if (userData.passwordHash !== passwordHash) {
+          throw new Error("Mot de passe incorrect.");
+        }
+
+        persistSession(accountId);
+        await openDashboard(accountId, userData.overlay || DEFAULT_OVERLAY);
+      }
+
+      function persistSession(accountId) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ accountId }));
+      }
+
+      function hydrateSession() {
+        try {
+          const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+          if (session?.accountId) {
+            openDashboard(session.accountId).catch(() => {
+              localStorage.removeItem(SESSION_KEY);
+            });
+          }
+        } catch {
+          localStorage.removeItem(SESSION_KEY);
+        }
+      }
+
+      async function openDashboard(accountId, cachedOverlay = null) {
+        currentUserId = accountId;
+
+        const userRef = ref(db, `users/${accountId}`);
+        const snapshot = await get(userRef);
+        if (!snapshot.exists()) {
+          authPanel.classList.remove("hidden");
+          dashboard.classList.add("hidden");
+          throw new Error("Compte introuvable dans la base.");
+        }
+
+        authPanel.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        const data = snapshot.val();
+        const overlay = { ...DEFAULT_OVERLAY, ...(cachedOverlay || data.overlay || {}) };
+        fillOverlayForm(overlay);
+        renderPreview(overlay);
+        overlayLink.textContent = buildOverlayLink(accountId);
+        roomStat.textContent = accountId;
+        updateDashboardMeta(data.updatedAt);
+      }
+
+      function updateDashboardMeta(timestamp = Date.now()) {
+        syncStat.textContent = new Date(timestamp || Date.now()).toLocaleString("fr-FR", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        });
+        overlayLink.textContent = currentUserId ? buildOverlayLink(currentUserId) : "-";
+        roomStat.textContent = currentUserId || "-";
+      }
+
+      function overlayField(name) {
+        return editorForm.elements.namedItem(name);
+      }
+
+      function fillOverlayForm(config) {
+        overlayField("title").value = config.title || DEFAULT_OVERLAY.title;
+        overlayField("subtitle").value = config.subtitle || DEFAULT_OVERLAY.subtitle;
+        overlayField("message").value = config.message || DEFAULT_OVERLAY.message;
+        overlayField("social").value = config.social || DEFAULT_OVERLAY.social;
+        overlayField("eventLabel").value = config.eventLabel || DEFAULT_OVERLAY.eventLabel;
+        overlayField("eventValue").value = config.eventValue || DEFAULT_OVERLAY.eventValue;
+        overlayField("goalLabel").value = config.goalLabel || DEFAULT_OVERLAY.goalLabel;
+        overlayField("goalValue").value = config.goalValue || DEFAULT_OVERLAY.goalValue;
+        overlayField("accent").value = config.accent || DEFAULT_OVERLAY.accent;
+        overlayField("textColor").value = config.textColor || DEFAULT_OVERLAY.textColor;
+        overlayField("backgroundOpacity").value = Number(config.backgroundOpacity ?? DEFAULT_OVERLAY.backgroundOpacity);
+        overlayField("showClock").value = String(Boolean(config.showClock ?? DEFAULT_OVERLAY.showClock));
+      }
+
+      function readOverlayForm() {
+        return {
+          title: overlayField("title").value.trim() || DEFAULT_OVERLAY.title,
+          subtitle: overlayField("subtitle").value.trim() || DEFAULT_OVERLAY.subtitle,
+          message: overlayField("message").value.trim() || DEFAULT_OVERLAY.message,
+          social: overlayField("social").value.trim() || DEFAULT_OVERLAY.social,
+          eventLabel: overlayField("eventLabel").value.trim() || DEFAULT_OVERLAY.eventLabel,
+          eventValue: overlayField("eventValue").value.trim() || DEFAULT_OVERLAY.eventValue,
+          goalLabel: overlayField("goalLabel").value.trim() || DEFAULT_OVERLAY.goalLabel,
+          goalValue: overlayField("goalValue").value.trim() || DEFAULT_OVERLAY.goalValue,
+          accent: overlayField("accent").value || DEFAULT_OVERLAY.accent,
+          textColor: overlayField("textColor").value || DEFAULT_OVERLAY.textColor,
+          backgroundOpacity: Number(overlayField("backgroundOpacity").value || DEFAULT_OVERLAY.backgroundOpacity),
+          showClock: overlayField("showClock").value === "true",
+        };
+      }
+
+      function buildOverlayLink(accountId) {
+        const url = new URL(window.location.href);
+        url.search = "";
+        url.searchParams.set("room", accountId);
+        return url.toString();
+      }
+
+      function renderPreview(config) {
+        lastPreviewConfig = config;
+        paintOverlay(previewSurface, config, currentUserId || "preview", false);
+        startClock(previewSurface, config.showClock, false);
+      }
+
+      async function startOverlayMode(room) {
+        document.getElementById("app").classList.add("hidden");
+        overlayView.classList.remove("hidden");
+        builderView.classList.add("hidden");
+
+        const normalizedRoom = normalizeAccountId(room);
+        if (!normalizedRoom) {
+          overlayEmpty.classList.remove("hidden");
+          return;
+        }
+
+        const overlayRef = ref(db, `users/${normalizedRoom}/overlay`);
+        onValue(overlayRef, (snapshot) => {
+          if (!snapshot.exists()) {
+            overlayEmpty.classList.remove("hidden");
+            overlayStage.innerHTML = "";
+            return;
+          }
+
+          overlayEmpty.classList.add("hidden");
+          const config = { ...DEFAULT_OVERLAY, ...snapshot.val() };
+          lastLiveOverlayConfig = config;
+          paintOverlay(overlayStage, config, normalizedRoom, true);
+          startClock(overlayStage, config.showClock, true);
+        });
+      }
+
+      function startClock(container, enabled, liveMode) {
+        if (liveMode) {
+          clearInterval(liveOverlayClockTimer);
+        } else {
+          clearInterval(previewClockTimer);
+        }
+
+        const tick = () => {
+          const clockTarget = container.querySelector("[data-clock]");
+          if (clockTarget) {
+            clockTarget.textContent = new Date().toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+          }
+        };
+
+        if (!enabled) {
+          tick();
+          return;
+        }
+
+        tick();
+        const timer = window.setInterval(tick, 1000);
+        if (liveMode) {
+          liveOverlayClockTimer = timer;
+        } else {
+          previewClockTimer = timer;
+        }
+      }
+
+      function paintOverlay(container, config, room, transparentPage) {
+        const foreground = config.textColor || DEFAULT_OVERLAY.textColor;
+        const accent = config.accent || DEFAULT_OVERLAY.accent;
+        const panelAlpha = clamp(config.backgroundOpacity ?? DEFAULT_OVERLAY.backgroundOpacity, 0.2, 0.95);
+        const panelColor = hexToRgba("#0f172a", panelAlpha);
+        const accentSoft = hexToRgba(accent, 0.2);
+        const shouldShowClock = config.showClock !== false;
+
+        container.innerHTML = `
+          <div class="overlay-surface" style="color: ${foreground}; ${transparentPage ? "background: transparent;" : ""}">
+            <div class="overlay-top">
+              <div class="glass-box headline-box" style="background: ${panelColor}; border-color: ${accentSoft}; box-shadow: 0 20px 40px ${hexToRgba(accent, 0.22)};">
+                <div class="badge" style="background: ${accentSoft}; border-color: ${hexToRgba(accent, 0.4)}; color: ${foreground};">LIVE • room=${room}</div>
+                <h2>${escapeHtml(config.title)}</h2>
+                <p class="muted" style="color: ${hexToRgba(foreground, 0.75)};">${escapeHtml(config.subtitle)}</p>
+              </div>
+              <div class="ticker-column">
+                ${shouldShowClock ? `<div class="ticker-pill" style="background:${panelColor}; border-color:${accentSoft};"><span>🕒</span><strong class="clock" data-clock>--:--:--</strong></div>` : ""}
+                <div class="ticker-pill" style="background:${panelColor}; border-color:${accentSoft};"><span>✨</span><div><small>${escapeHtml(config.eventLabel)}</small><br /><strong>${escapeHtml(config.eventValue)}</strong></div></div>
+                <div class="ticker-pill" style="background:${panelColor}; border-color:${accentSoft};"><span>🎯</span><div><small>${escapeHtml(config.goalLabel)}</small><br /><strong>${escapeHtml(config.goalValue)}</strong></div></div>
+              </div>
+            </div>
+            <div class="overlay-bottom">
+              <div class="pill-row">
+                <div class="info-pill" style="background:${panelColor}; border-color:${accentSoft};"><span>📣</span><strong>${escapeHtml(config.social)}</strong></div>
+                <div class="room-pill" style="background:${panelColor}; border-color:${accentSoft};"><span>🔗</span><span>${escapeHtml(`?room=${room}`)}</span></div>
+              </div>
+              <div class="glass-box overlay-center-note" style="background:${panelColor}; border-color:${accentSoft}; box-shadow: 0 18px 36px ${hexToRgba(accent, 0.18)};">
+                <div class="badge" style="background:${accentSoft}; border-color:${hexToRgba(accent, 0.38)}; color:${foreground};">Message stream</div>
+                <p class="message">${escapeHtml(config.message)}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function hexToRgba(hex, alpha = 1) {
+        const normalized = hex.replace("#", "");
+        const bigint = Number.parseInt(normalized.length === 3 ? normalized.split("").map((char) => char + char).join("") : normalized, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, Number(value)));
+      }
+
+      function setStatus(target, message, type = "") {
+        target.textContent = message;
+        target.className = `status${type ? ` ${type}` : ""}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+    </script>
+  </body>
+</html>
