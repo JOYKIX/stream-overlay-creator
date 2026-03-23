@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stream Overlay Creator</title>
+    <title>Stream Overlay Creator Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -15,51 +15,57 @@
   <body>
     <main id="app" class="shell">
       <section class="hero">
-        <div class="hero-card hero-card-primary">
-          <span class="badge">⚡ Créateur d'overlay live + Firebase</span>
-          <h1>Compose un overlay moderne pour OBS, Streamlabs et navigateur en quelques clics.</h1>
-          <p class="muted hero-copy">
-            L'app est maintenant séparée proprement en HTML + CSS + JS, avec un éditeur plus complet :
-            presets visuels, layouts, progression d'objectif, contrôle du style des cartes,
-            aperçu temps réel et lien public prêt à coller dans OBS.
+        <div class="hero-copy panel">
+          <span class="badge">Overlay Studio total control</span>
+          <h1>Crée un overlay entièrement modulable, activable, désactivable et déplaçable.</h1>
+          <p class="muted">
+            Cette version transforme le site en vrai studio de composition : scènes complètes,
+            calques, widgets custom, déplacement direct dans le canvas, presets, styles globaux,
+            granularité par bloc et publication en temps réel dans Firebase.
           </p>
           <div class="hero-pills">
-            <span class="hero-pill">Presets stream</span>
-            <span class="hero-pill">Preview temps réel</span>
-            <span class="hero-pill">Lien OBS instantané</span>
+            <span>Calques & visibilité</span>
+            <span>Drag & drop + snap</span>
+            <span>Widgets custom à l'infini</span>
+            <span>OBS-ready en direct</span>
           </div>
         </div>
-        <div class="hero-card hero-card-secondary">
-          <h2>Workflow</h2>
+        <div class="hero-side panel">
+          <h2>Ce que tu peux faire</h2>
           <div class="feature-list">
-            <div class="feature-item">
-              <strong>1. Crée ton compte</strong>
-              <p class="muted">Ton identifiant devient aussi la room publique de l'overlay.</p>
-            </div>
-            <div class="feature-item">
-              <strong>2. Personnalise à fond</strong>
-              <p class="muted">Titres, message, réseaux, couleurs, layout, fond et progression.</p>
-            </div>
-            <div class="feature-item">
-              <strong>3. Branche dans OBS</strong>
-              <p class="muted">Copie l'URL générée avec <strong>?room=ton-id</strong>.</p>
-            </div>
+            <article>
+              <strong>Tout activer / désactiver</strong>
+              <p class="muted">Chaque élément possède son propre état de visibilité.</p>
+            </article>
+            <article>
+              <strong>Tout bouger</strong>
+              <p class="muted">Déplace tes blocs à la souris ou au pixel près dans l'inspecteur.</p>
+            </article>
+            <article>
+              <strong>Tout customiser</strong>
+              <p class="muted">Couleurs, taille, opacité, rayon, fond, texte, accent, alignement.</p>
+            </article>
+            <article>
+              <strong>Créer de nouveaux blocs</strong>
+              <p class="muted">Ajoute des cartes, titres, compteurs, clocks, goals et widgets libres.</p>
+            </article>
           </div>
         </div>
       </section>
 
-      <section id="builder-view" class="grid">
+      <section id="builder-view" class="builder-shell">
         <aside class="panel auth-card" id="auth-panel">
           <div>
-            <h2>Connexion / création de compte</h2>
+            <h2>Compte / room</h2>
             <p class="muted">
-              Le mot de passe est hashé en SHA-256 côté client. Comme l'app est 100% front,
-              cela reste une protection basique et non un remplacement d'un backend sécurisé.
+              L'identifiant sert aussi d'URL publique pour l'overlay. Le mot de passe est hashé
+              côté client en SHA-256 pour une protection basique, mais cela ne remplace pas un vrai backend sécurisé.
             </p>
           </div>
+
           <div class="tabs" role="tablist">
-            <button class="tab active" data-tab="signup" type="button">Créer un compte</button>
-            <button class="tab" data-tab="login" type="button">Se connecter</button>
+            <button class="tab active" data-tab="signup" type="button">Créer</button>
+            <button class="tab" data-tab="login" type="button">Connexion</button>
           </div>
 
           <form id="auth-form" class="form-grid">
@@ -78,17 +84,17 @@
           </form>
 
           <div id="auth-status" class="status" aria-live="polite"></div>
-
-          <div class="footer-note muted">
-            Astuce : ton identifiant devient la room partagée avec l'overlay en direct.
-          </div>
         </aside>
 
-        <section id="dashboard" class="panel dashboard hidden">
-          <div class="dashboard-top">
+        <section id="dashboard" class="dashboard hidden">
+          <div class="dashboard-top panel">
             <div>
-              <h2>Studio overlay</h2>
-              <p class="muted">Une vraie console de création pour préparer une scène stream plus clean, plus lisible et plus premium.</p>
+              <span class="badge subtle">Studio connecté</span>
+              <h2>Overlay Builder Pro</h2>
+              <p class="muted">
+                Gère ta scène comme une mini régie graphique : presets complets, canvas global,
+                liste des calques, inspecteur et preview live.
+              </p>
             </div>
             <div class="inline-actions">
               <button id="copy-link" class="ghost-btn" type="button">Copier le lien OBS</button>
@@ -99,202 +105,296 @@
           </div>
 
           <div class="stats">
-            <div class="stat-card">
+            <div class="stat-card panel">
               <span class="muted">Room active</span>
               <strong id="room-stat">-</strong>
             </div>
-            <div class="stat-card">
+            <div class="stat-card panel">
               <span class="muted">Dernière synchro</span>
               <strong id="sync-stat">Jamais</strong>
             </div>
-            <div class="stat-card">
+            <div class="stat-card panel">
               <span class="muted">Preset actif</span>
-              <strong id="theme-stat">Aurora</strong>
+              <strong id="theme-stat">Nebula Command</strong>
             </div>
-            <div class="stat-card">
-              <span class="muted">Layout</span>
-              <strong id="layout-stat">Split</strong>
+            <div class="stat-card panel">
+              <span class="muted">Éléments</span>
+              <strong id="layout-stat">0</strong>
             </div>
           </div>
 
-          <div class="editor-layout">
-            <div class="editor-column">
-              <section class="editor-section">
-                <div class="section-heading">
-                  <h3>Presets rapides</h3>
-                  <p class="muted">Applique une direction artistique complète puis ajuste les détails.</p>
+          <div class="dashboard-grid">
+            <section class="panel stack-section">
+              <div class="section-heading">
+                <div>
+                  <h3>Presets de scène</h3>
+                  <p class="muted">Charge une direction complète puis ajuste chaque bloc individuellement.</p>
                 </div>
-                <div id="preset-buttons" class="preset-grid"></div>
-              </section>
+              </div>
+              <div id="preset-buttons" class="preset-grid"></div>
+            </section>
 
-              <form id="editor-form" class="form-grid editor-form">
-                <section class="editor-section">
-                  <div class="section-heading">
-                    <h3>Contenu</h3>
-                    <p class="muted">Tout ce que le viewer doit lire en un coup d'œil.</p>
-                  </div>
-                  <div class="form-grid two-columns">
-                    <div class="field">
-                      <label for="title">Titre principal</label>
-                      <input id="title" name="title" maxlength="40" placeholder="Starting Soon" />
-                    </div>
-                    <div class="field">
-                      <label for="scene-label">Badge scène</label>
-                      <input id="scene-label" name="sceneLabel" maxlength="24" placeholder="STARTING SOON" />
-                    </div>
-                    <div class="field span-2">
-                      <label for="subtitle">Sous-titre</label>
-                      <input id="subtitle" name="subtitle" maxlength="90" placeholder="On démarre dans quelques minutes" />
-                    </div>
-                    <div class="field span-2">
-                      <label for="message">Message / note centrale</label>
-                      <textarea id="message" name="message" maxlength="260" placeholder="Merci d'être là 💜"></textarea>
-                    </div>
-                    <div class="field">
-                      <label for="cta">Call-to-action</label>
-                      <input id="cta" name="cta" maxlength="50" placeholder="Abonne-toi et active la cloche" />
-                    </div>
-                    <div class="field">
-                      <label for="social">Handle / réseau</label>
-                      <input id="social" name="social" maxlength="40" placeholder="@tonpseudo" />
-                    </div>
-                    <div class="field">
-                      <label for="event-label">Label événement</label>
-                      <input id="event-label" name="eventLabel" maxlength="30" placeholder="Dernier follow" />
-                    </div>
-                    <div class="field">
-                      <label for="event-value">Valeur événement</label>
-                      <input id="event-value" name="eventValue" maxlength="40" placeholder="viewer_42" />
-                    </div>
-                    <div class="field">
-                      <label for="goal-label">Label objectif</label>
-                      <input id="goal-label" name="goalLabel" maxlength="30" placeholder="Objectif subs" />
-                    </div>
-                    <div class="field">
-                      <label for="goal-value">Valeur objectif</label>
-                      <input id="goal-value" name="goalValue" maxlength="40" placeholder="42 / 100" />
-                    </div>
-                  </div>
-                </section>
-
-                <section class="editor-section">
-                  <div class="section-heading">
-                    <h3>Direction artistique</h3>
-                    <p class="muted">Choisis la structure, le fond et les couleurs dominantes.</p>
-                  </div>
-                  <div class="form-grid two-columns">
-                    <div class="field">
-                      <label for="layout">Layout</label>
-                      <select id="layout" name="layout">
-                        <option value="split">Split</option>
-                        <option value="focus">Focus</option>
-                        <option value="minimal">Minimal</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="background-style">Fond</label>
-                      <select id="background-style" name="backgroundStyle">
-                        <option value="aurora">Aurora</option>
-                        <option value="grid">Grid</option>
-                        <option value="spotlight">Spotlight</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="card-style">Style des cartes</label>
-                      <select id="card-style" name="cardStyle">
-                        <option value="glass">Glass</option>
-                        <option value="solid">Solid</option>
-                        <option value="outline">Outline</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="font-scale">Taille UI</label>
-                      <input id="font-scale" name="fontScale" type="range" min="0.9" max="1.2" step="0.05" value="1" />
-                    </div>
-                    <div class="field">
-                      <label for="accent">Couleur accent</label>
-                      <input id="accent" name="accent" type="color" value="#8b5cf6" />
-                    </div>
-                    <div class="field">
-                      <label for="accent-secondary">Couleur secondaire</label>
-                      <input id="accent-secondary" name="accentSecondary" type="color" value="#38bdf8" />
-                    </div>
-                    <div class="field">
-                      <label for="text-color">Couleur texte</label>
-                      <input id="text-color" name="textColor" type="color" value="#f8fafc" />
-                    </div>
-                    <div class="field">
-                      <label for="background-opacity">Opacité des cartes</label>
-                      <input id="background-opacity" name="backgroundOpacity" type="range" min="0.25" max="0.98" step="0.01" value="0.78" />
-                    </div>
-                  </div>
-                </section>
-
-                <section class="editor-section">
-                  <div class="section-heading">
-                    <h3>Widgets stream</h3>
-                    <p class="muted">Active ce qui doit apparaître en overlay sans surcharge visuelle.</p>
-                  </div>
-                  <div class="form-grid two-columns">
-                    <div class="field">
-                      <label for="goal-progress">Progression objectif</label>
-                      <input id="goal-progress" name="goalProgress" type="range" min="0" max="100" step="1" value="42" />
-                    </div>
-                    <div class="field">
-                      <label for="show-clock">Afficher l'horloge</label>
-                      <select id="show-clock" name="showClock">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="show-goal">Afficher l'objectif</label>
-                      <select id="show-goal" name="showGoal">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="show-social">Afficher le réseau</label>
-                      <select id="show-social" name="showSocial">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="show-room">Afficher le badge room</label>
-                      <select id="show-room" name="showRoomBadge">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                      </select>
-                    </div>
-                    <div class="field">
-                      <label for="show-cta">Afficher le CTA</label>
-                      <select id="show-cta" name="showCta">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                      </select>
-                    </div>
-                  </div>
-                </section>
-
-                <div class="inline-actions sticky-actions">
-                  <button class="btn" type="submit">Enregistrer</button>
-                  <button id="reset-overlay" class="ghost-btn" type="button">Réinitialiser</button>
-                  <button id="apply-demo" class="ghost-btn" type="button">Charger une démo</button>
+            <section class="panel stack-section">
+              <div class="section-heading">
+                <div>
+                  <h3>Scène globale</h3>
+                  <p class="muted">Réglages de canvas, look global, snapping et style par défaut.</p>
+                </div>
+              </div>
+              <form id="scene-form" class="form-grid two-columns compact-grid">
+                <div class="field span-2">
+                  <label for="scene-name">Nom de scène</label>
+                  <input id="scene-name" name="sceneName" maxlength="60" placeholder="Ma scène starting soon" />
+                </div>
+                <div class="field">
+                  <label for="scene-layout">Layout global</label>
+                  <select id="scene-layout" name="layoutMode">
+                    <option value="freeform">Freeform</option>
+                    <option value="focus-left">Focus left</option>
+                    <option value="focus-right">Focus right</option>
+                    <option value="centered">Centered</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-font">Police</label>
+                  <select id="scene-font" name="fontFamily">
+                    <option value="Inter, sans-serif">Inter</option>
+                    <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                    <option value="system-ui, sans-serif">System UI</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-background">Fond</label>
+                  <select id="scene-background" name="backgroundStyle">
+                    <option value="nebula">Nebula</option>
+                    <option value="grid">Grid</option>
+                    <option value="spotlight">Spotlight</option>
+                    <option value="mesh">Mesh</option>
+                    <option value="clean">Clean</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-card-style">Style cartes</label>
+                  <select id="scene-card-style" name="cardStyle">
+                    <option value="glass">Glass</option>
+                    <option value="solid">Solid</option>
+                    <option value="outline">Outline</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-accent">Accent</label>
+                  <input id="scene-accent" name="accent" type="color" value="#8b5cf6" />
+                </div>
+                <div class="field">
+                  <label for="scene-accent-secondary">Accent secondaire</label>
+                  <input id="scene-accent-secondary" name="accentSecondary" type="color" value="#22d3ee" />
+                </div>
+                <div class="field">
+                  <label for="scene-text-color">Texte</label>
+                  <input id="scene-text-color" name="textColor" type="color" value="#f8fafc" />
+                </div>
+                <div class="field">
+                  <label for="scene-panel-color">Couleur cartes</label>
+                  <input id="scene-panel-color" name="panelColor" type="color" value="#0f172a" />
+                </div>
+                <div class="field">
+                  <label for="scene-opacity">Opacité cartes</label>
+                  <input id="scene-opacity" name="panelOpacity" type="range" min="0.18" max="1" step="0.01" value="0.72" />
+                </div>
+                <div class="field">
+                  <label for="scene-blur">Blur</label>
+                  <input id="scene-blur" name="blur" type="range" min="0" max="28" step="1" value="16" />
+                </div>
+                <div class="field">
+                  <label for="scene-radius">Rayon par défaut</label>
+                  <input id="scene-radius" name="radius" type="range" min="4" max="40" step="1" value="24" />
+                </div>
+                <div class="field">
+                  <label for="scene-font-scale">Scale UI</label>
+                  <input id="scene-font-scale" name="fontScale" type="range" min="0.8" max="1.4" step="0.02" value="1" />
+                </div>
+                <div class="field">
+                  <label for="scene-grid">Afficher la grille</label>
+                  <select id="scene-grid" name="showGrid">
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-snap">Snap sur grille</label>
+                  <select id="scene-snap" name="snapToGrid">
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="scene-grid-size">Taille grille</label>
+                  <input id="scene-grid-size" name="gridSize" type="range" min="8" max="64" step="2" value="20" />
+                </div>
+                <div class="field">
+                  <label for="scene-safe-area">Safe area</label>
+                  <input id="scene-safe-area" name="safeArea" type="range" min="0" max="80" step="2" value="24" />
                 </div>
               </form>
-            </div>
+            </section>
 
-            <div class="preview-card">
+            <section class="panel stack-section">
+              <div class="section-heading">
+                <div>
+                  <h3>Création rapide</h3>
+                  <p class="muted">Ajoute un nouveau bloc prêt à customiser puis place-le où tu veux.</p>
+                </div>
+              </div>
+              <div class="quick-actions">
+                <button class="ghost-btn add-element" type="button" data-kind="title">+ Titre héro</button>
+                <button class="ghost-btn add-element" type="button" data-kind="text">+ Carte texte</button>
+                <button class="ghost-btn add-element" type="button" data-kind="stat">+ Stat / event</button>
+                <button class="ghost-btn add-element" type="button" data-kind="goal">+ Barre d'objectif</button>
+                <button class="ghost-btn add-element" type="button" data-kind="clock">+ Horloge</button>
+                <button class="ghost-btn add-element" type="button" data-kind="custom">+ Widget custom</button>
+              </div>
+            </section>
+
+            <section class="panel stack-section layers-panel">
+              <div class="section-heading">
+                <div>
+                  <h3>Calques</h3>
+                  <p class="muted">Sélectionne, masque, duplique, monte ou descends chaque bloc.</p>
+                </div>
+              </div>
+              <div id="layers-list" class="layers-list"></div>
+            </section>
+
+            <section class="panel stack-section inspector-panel">
+              <div class="section-heading">
+                <div>
+                  <h3>Inspecteur de bloc</h3>
+                  <p class="muted">Tout se règle ici : contenu, visibilité, position, taille et style.</p>
+                </div>
+              </div>
+              <form id="element-form" class="form-grid two-columns compact-grid hidden">
+                <div class="field span-2">
+                  <label for="el-name">Nom interne</label>
+                  <input id="el-name" name="name" maxlength="40" placeholder="Badge principal" />
+                </div>
+                <div class="field">
+                  <label for="el-enabled">Visible</label>
+                  <select id="el-enabled" name="enabled">
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="el-kind">Type</label>
+                  <input id="el-kind" name="kind" disabled />
+                </div>
+                <div class="field span-2">
+                  <label for="el-title">Titre / ligne 1</label>
+                  <input id="el-title" name="title" maxlength="80" />
+                </div>
+                <div class="field span-2">
+                  <label for="el-body">Texte / ligne 2</label>
+                  <textarea id="el-body" name="body" maxlength="260"></textarea>
+                </div>
+                <div class="field">
+                  <label for="el-value">Valeur</label>
+                  <input id="el-value" name="value" maxlength="80" />
+                </div>
+                <div class="field">
+                  <label for="el-icon">Icône / préfixe</label>
+                  <input id="el-icon" name="icon" maxlength="10" placeholder="✨" />
+                </div>
+                <div class="field">
+                  <label for="el-progress">Progression</label>
+                  <input id="el-progress" name="progress" type="range" min="0" max="100" step="1" value="50" />
+                </div>
+                <div class="field">
+                  <label for="el-align">Alignement</label>
+                  <select id="el-align" name="align">
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="el-x">X</label>
+                  <input id="el-x" name="x" type="number" min="0" max="1880" step="1" />
+                </div>
+                <div class="field">
+                  <label for="el-y">Y</label>
+                  <input id="el-y" name="y" type="number" min="0" max="1040" step="1" />
+                </div>
+                <div class="field">
+                  <label for="el-w">Largeur</label>
+                  <input id="el-w" name="w" type="number" min="80" max="1920" step="1" />
+                </div>
+                <div class="field">
+                  <label for="el-h">Hauteur mini</label>
+                  <input id="el-h" name="h" type="number" min="50" max="1080" step="1" />
+                </div>
+                <div class="field">
+                  <label for="el-font-size">Taille texte</label>
+                  <input id="el-font-size" name="fontSize" type="range" min="12" max="76" step="1" value="22" />
+                </div>
+                <div class="field">
+                  <label for="el-weight">Graisse</label>
+                  <input id="el-weight" name="fontWeight" type="range" min="400" max="900" step="100" value="700" />
+                </div>
+                <div class="field">
+                  <label for="el-radius">Rayon</label>
+                  <input id="el-radius" name="radius" type="range" min="0" max="40" step="1" value="22" />
+                </div>
+                <div class="field">
+                  <label for="el-opacity">Opacité</label>
+                  <input id="el-opacity" name="opacity" type="range" min="0.2" max="1" step="0.01" value="1" />
+                </div>
+                <div class="field">
+                  <label for="el-rotation">Rotation</label>
+                  <input id="el-rotation" name="rotation" type="range" min="-15" max="15" step="1" value="0" />
+                </div>
+                <div class="field">
+                  <label for="el-z">Plan (z-index)</label>
+                  <input id="el-z" name="zIndex" type="number" min="1" max="999" step="1" />
+                </div>
+                <div class="field">
+                  <label for="el-bg">Fond</label>
+                  <input id="el-bg" name="bgColor" type="color" value="#0f172a" />
+                </div>
+                <div class="field">
+                  <label for="el-text-color">Texte</label>
+                  <input id="el-text-color" name="textColor" type="color" value="#f8fafc" />
+                </div>
+                <div class="field">
+                  <label for="el-accent-color">Accent</label>
+                  <input id="el-accent-color" name="accentColor" type="color" value="#8b5cf6" />
+                </div>
+                <div class="field">
+                  <label for="el-bg-opacity">Opacité fond</label>
+                  <input id="el-bg-opacity" name="bgOpacity" type="range" min="0" max="1" step="0.01" value="0.72" />
+                </div>
+                <div class="field span-2">
+                  <label for="el-note">Note designer</label>
+                  <input id="el-note" name="note" maxlength="120" placeholder="Ex: à garder en haut à droite" />
+                </div>
+                <div class="inline-actions span-2">
+                  <button id="duplicate-element" class="ghost-btn" type="button">Dupliquer</button>
+                  <button id="toggle-element" class="ghost-btn" type="button">Afficher / masquer</button>
+                  <button id="remove-element" class="danger-btn" type="button">Supprimer</button>
+                </div>
+              </form>
+              <div id="element-empty" class="empty-state muted">Sélectionne un bloc dans la liste ou directement dans le canvas.</div>
+            </section>
+
+            <section class="panel preview-panel">
               <div class="preview-head">
                 <div>
-                  <h3>Aperçu live</h3>
-                  <p class="muted">L'aperçu reflète instantanément le rendu de l'overlay.</p>
+                  <h3>Aperçu live + édition directe</h3>
+                  <p class="muted">Clique un bloc pour l'éditer, glisse-le pour le déplacer et sauvegarde pour publier.</p>
                 </div>
                 <div class="preview-meta">
-                  <div class="preview-chip">OBS-ready</div>
-                  <div class="preview-chip">Transparent</div>
+                  <span>Drag</span>
+                  <span>Snap</span>
+                  <span>Realtime</span>
                 </div>
               </div>
               <div class="link-box">
@@ -306,12 +406,17 @@
                   <span class="stream-dot live"></span>
                   <span class="stream-dot"></span>
                   <span class="stream-dot"></span>
-                  <strong>Canvas preview</strong>
+                  <strong>Overlay canvas editor</strong>
                 </div>
-                <div id="preview-surface" class="overlay-surface"></div>
+                <div id="preview-surface" class="preview-surface"></div>
+              </div>
+              <div class="inline-actions sticky-actions">
+                <button id="save-scene" class="btn" type="button">Enregistrer</button>
+                <button id="reset-overlay" class="ghost-btn" type="button">Réinitialiser</button>
+                <button id="apply-demo" class="ghost-btn" type="button">Charger une démo</button>
               </div>
               <div id="editor-status" class="status" aria-live="polite"></div>
-            </div>
+            </section>
           </div>
         </section>
       </section>
@@ -322,9 +427,7 @@
       <div id="overlay-empty" class="overlay-empty hidden">
         <div>
           <h2>Overlay introuvable</h2>
-          <p>
-            Vérifie l'URL, par exemple <strong>?room=ton-id</strong>, ou crée d'abord le compte associé.
-          </p>
+          <p>Vérifie l'URL, par exemple <strong>?room=ton-id</strong>, ou crée d'abord la room correspondante.</p>
         </div>
       </div>
     </section>
